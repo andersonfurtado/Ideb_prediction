@@ -61,7 +61,8 @@ Os ficheiros de arranque necessários para executar este projeto são os seguint
 ## Conjunto de dados
 
 ### Visão Geral
-Os dados foram obtidos a partir do Censo Escolar 2019 e divulgados em 15 de setembro de 2020 pelo Inep, que podem ser encontrados em <http://download.inep.gov.br/educacao_basica/portal_ideb/planilhas_para_download/2019/divulgacao_ensino_medio_municipios_2019.zip>.
+Os dados foram obtidos a partir do Censo Escolar 2019 e divulgados em 28 de setembro de 2023 pelo Inep, que podem ser encontrados em <http://download.inep.gov.br/educacao_basica/portal_ideb/planilhas_para_download/2019/divulgacao_ensino_medio_municipios_2019.zip>.
+<https://download.inep.gov.br/educacao_basica/portal_ideb/planilhas_para_download/2021/divulgacao_ensino_medio_municipios_2021.zip>.
 
 ### Tarefa
 Considerando que o Ideb foi desenvolvido para ser um indicador que sintetiza informações de desempenho em exames padronizados com informações de desempenho escolar (taxa média
