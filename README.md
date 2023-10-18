@@ -1,4 +1,4 @@
-# Predição do Índice de Desenvolvimento da Educação Básica (Ideb) utilizando a Aprendizagem Automática do Azure
+# Predição do Índice de Desenvolvimento da Educação Básica (Ideb) utilizando a Automação de Machine Larning do Azure
 
 # Tabela de Conteúdo
 <!--ts-->
