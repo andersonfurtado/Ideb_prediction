@@ -1,186 +1,186 @@
-# Prediction of the Basic Education Development Index (Ideb) using Azure Machine Learning
+# Predição do Índice de Desenvolvimento da Educação Básica (Ideb) utilizando a Aprendizagem Automática do Azure
 
-# Table of Contents
+# Tabela de Conteúdo
 <!--ts-->
-- [Architecture Diagram](#ArchitectureDiagram)
-- [Project Set Up and Installation](#Project-Set-Up-and-Installation)
+- [Diagrama de Arquitetura](#ArchitectureDiagram)
+- [[Configuração e instalação do projeto](#Project-Set-Up-and-Installation)
 - [Dataset](#dataset)
-  * [Overview](#overview)
-  * [Task](#task)
-  * [Access](#access)
-- [Automated ML](#automated-ml)
-  * [Overview of AutoML Settings](#overview-of-automl-settings)
-  * [Results](#results)
+  * [Visão geral](#overview)
+  * [Tarefas](#task)
+  * [Acesso](#access)
+- [ML Automatizado](#automated-ml)
+  * [Visão geral das configurações do AutoML](#overview-of-automl-settings)
+  * [Resultados](#results)
   * [RunDetails Widget](#rundetails-widget)
-  * [Best Model](#best-model)
+  * [Melhor Modelo AutoML](#best-model)
 - [Hyperparameter Tuning](#hyperparameter-tuning)
-  * [Overview of Hyperparameter Tuning Settings](#overview-of-hyperparameter-tuning-settings)
-  * [Results](#results)
+  * [Síntese das definições dos hiperparâmetros](#overview-of-hyperparameter-tuning-settings)
+  * [Resultados](#results)
   * [RunDetails Widget](#rundetails-widget)
-  * [Best Model](#best-model)
-- [Model Deployment](#model-deployment)
-  * [Overview of Deployed Model](#overview-of-deployed-model)
+  * [Melhor MOodelo](#best-model)
+- [Implementação do Modelo](#model-deployment)
+  * [Síntese da Implementação do Modelo](#overview-of-deployed-model)
   * [Endpoint](#endpoint)
   * [Endpoint Query](#endpoint-query)  
-- [Suggestions to Improve](#suggestions-to-improve)
-- [References](#references)
+- [Sugestões de Melhoria](#suggestions-to-improve)
+- [Referências](#references)
  
 <!--te-->  
 
-The project is about the prediction of the Basic Education Development Index (Ideb) of high schools in Brazil. The Ideb is calculated from data on school approval, obtained from the School Census, and performance averages in the Basic Education Assessment System (Saeb) in Brazil. Ideb adds to the pedagogical focus of large-scale evaluations the possibility of synthetic results, which are easily assimilable, and which allow the establishment of educational quality goals for education systems.
+O projeto trata da previsão do Índice de Desenvolvimento da Educação Básica (Ideb) das escolas de ensino médio no Brasil. O Ideb é calculado a partir de dados sobre aprovação escolar, obtidos no Censo Escolar, e médias de desempenho no Sistema de Avaliação da Educação Básica (Saeb) no Brasil. O Ideb agrega ao foco pedagógico das avaliações em larga escala a possibilidade de resultados sintéticos, facilmente assimiláveis, e que permitem o estabelecimento de metas de qualidade educacional para os sistemas de ensino.
 
-In this project, I considered a regression problem, that is, a process where a model learns to predict a continuous value output for a given input data. For this project, I ran essentially two processes:
+Neste projeto, considerei um problema de regressão, ou seja, um processo em que um modelo aprende a prever um valor contínuo de saída para um dado dado de entrada. Para este projeto, executei essencialmente dois processos:
 <ol>
-  <li>First I applied AutoML where several models are trained to fit the training data. Then I chose and saved the best model, that is, the model with the best score.
+  <li>Primeiro, apliquei o AutoML, onde vários modelos são treinados para se ajustarem aos dados de treino. Depois escolhi e guardei o melhor modelo, ou seja, o modelo com a melhor pontuação.
   </li><br>
-  <li> Second, using HyperDrive, I adjusted the hyperparameters and applied the Random Forest Regressor which consists of a meta estimator that fits a number of classifying decision trees on various sub-samples of the dataset and uses averaging to improve the predictive accuracy and control over-fitting.
+  <li> Em segundo lugar, utilizando o HyperDrive, ajustei os hiperparâmetros e apliquei o Random Forest Regressor, que consiste num meta-estimador que ajusta uma série de árvores de decisão de classificação em várias subamostras do conjunto de dados e utiliza o cálculo da média para melhorar a precisão da previsão e controlar o sobreajuste.
   </li><br>
 </ol>
-Hyperdrive and Automl models have been trained and deployed using an endpoint in Azure Machine Learning.
+Modelos Hyperdrive and Automl foram treinados e implantados usando um ponto de extremidade no Azure Machine Learning.
 
-The resolution of this problem is justified because educational indicators such as Ideb are desirable because they allow the monitoring of the country's education system. Its importance, in terms of diagnosis and guidance of political actions focused on improving the educational system, is in:
-- detect schools and / or education networks whose students are underperforming in terms of performance and proficiency;
-- monitor the temporal evolution of student performance in these schools and / or education networks.
+
+A resolução desse problema se justifica porque indicadores educacionais como o Ideb são desejáveis por permitirem o monitoramento do sistema educacional do país. Sua importância, em termos de diagnóstico e orientação de ações políticas voltadas para a melhoria do sistema educacional, está em:
+- detetar escolas e/ou redes de ensino cujos alunos apresentam baixo desempenho em termos de rendimento e proficiência;
+- acompanhar a evolução temporal do desempenho dos alunos nessas escolas e/ou redes de ensino.
 
 ## Architecture Diagram
 
-This contains the `Architecture Diagram` of this project:
+Contém o `Diagrama de Arquitetura` deste projeto:
 
 ![Architecture Diagram](./Images/ArchitectureDiagram.png)
 
 ## Project Set Up and Installation
-The starter files that you need to run this project are the following:
-- **automl.ipynb**: Jupyter Notebook to run the autoML experiment
-- **hyperparameter_tuning.ipynb**: Jupyter Notebook to run the Hyperdrive experiment
-- **train.py**: Script used in Hyperdrive
-- **score.py**: Script used to deploy the model
-- **ideb_dataset.csv**: The dataset prepared after the release of the Basic Education Development Index (Ideb) by the National Institute for Educational Studies and Research Anísio Teixeira (Inep).
+Os arquivos necessários para executar este projeto são os seguintes:
+- **automl.ipynb**: Jupyter Notebook para executar o experimento autoML
+- **hyperparameter_tuning.ipynb**: Jupyter Notebook para realizar o experimento Hyperdrive
+- **train.py**: Script utilizado no Hyperdrive
+- **score.py**: Script utilizado para implantar o modelo
+- **ideb_dataset.csv**: O conjunto de dados foi elaborado após a divulgação do Índice de Desenvolvimento da Educação Básica (Ideb) pelo Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira (Inep).
 
 
 ## Dataset
 
 ### Overview
-The data were obtained from the 2019 School Census and released on September 15, 2020 by Inep, which can be found at <http://download.inep.gov.br/educacao_basica/portal_ideb/planilhas_para_download/2019/divulgacao_ensino_medio_municipios_2019.zip>.
+Os dados foram obtidos a partir do Censo Escolar 2019 e divulgados em 28 de setembro de 2023 pelo Inep, que pode ser consultado em<http://download.inep.gov.br/educacao_basica/portal_ideb/planilhas_para_download/2019/divulgacao_ensino_medio_municipios_2019.zip>.
 
 ### Task
-Considering that Ideb was developed to be an indicator that synthesizes information from performance in standardized exams with information on school performance (average rate
-approval of students in the teaching stage), the features used to predict Basic Education Development Index were:
-- **Total Approval Rate (2019)**: In the database called "TAprov2019 Total"
-- **1st Series Approval Rate (2019)**: In the database called "TAprov2019_1_serie"
-- **2nd Series Approval Rate (2019)**: In the database called "TAprov2019_2_serie"
-- **2nd Series Approval Rate (2019)**: In the database called "TAprov2019_3_serie"
-- **4th Grade Approval Rate (2019)**: In the database called "TAprov2019_4_serie"
-- **Approval_Indicator**: In the database called "Indicador de Rendimento"
-- **Grade SAEB Mathematics (2019)**: In the database called "SAEB2019_Matematica"
-- **Grade SAEB Language Portuguese (2019)**: In the database called "SAEB2019_Lingua Portuguesa"
-- **SAEB Standardized Average Score (N)**: In the database called "SAEB2019_Nota Media Padronizada"
+Considerando que o Ideb foi desenvolvido para ser um indicador que sintetiza informações de desempenho em exames padronizados com informações de desempenho escolar (taxa média de aprovação dos alunos na etapa de ensino), as características utilizadas para predizer o Índice de Desenvolvimento da Educação Básica foram
+aprovação dos alunos na etapa de ensino), as características utilizadas para predizer o Índice de Desenvolvimento da Educação Básica foram:
+- **Total Approval Rate (2019)**: Na base de dados denominada "TAprov2019 Total"
+- **1st Series Approval Rate (2019)**: Na base de dados denominada "TAprov2019_1_serie"
+- **2nd Series Approval Rate (2019)**: Na base de dados denominada "TAprov2019_2_serie"
+- **2nd Series Approval Rate (2019)**: Na base de dados denominada "TAprov2019_3_serie"
+- **4th Grade Approval Rate (2019)**: Na base de dados denominada "TAprov2019_4_serie"
+- **Approval_Indicator**: Na base de dados denominada "Indicador de Rendimento"
+- **Grade SAEB Mathematics (2019)**: Na base de dados denominada "SAEB2019_Matematica"
+- **Grade SAEB Language Portuguese (2019)**: Na base de dados denominada "SAEB2019_Lingua Portuguesa"
+- **SAEB Standardized Average Score (N)**: Na base de dados denominada "SAEB2019_Nota Media Padronizada"
 
 ### Access
-Initially, I explored the Ideb database repository on the Inep website to obtain a set of data to train the models. As soon as I decided to work with the Ideb 2019 data set by high school, I found the link to download the data. The link was then passed to the from_delimited_files method of the Tabular class object of the Dataset class object.
+Inicialmente, explorei o repositório da base de dados do Ideb no site do Inep para obter um conjunto de dados para treinar os modelos. Assim que decidi trabalhar com o conjunto de dados do Ideb 2019 por ensino médio, encontrei o link para baixar os dados. O link foi então passado para o método from_delimited_files da classe Tabular objeto da classe Dataset objeto.
 
 ## Automated ML
-To configure the Automated ML run we need to specify what kind of a task we are dealing with, the primary metric, train and validation data sets (which are in TabularDataset form) and the target column name. Featurization is set to "auto", meaning that the featurization step should be done automatically. 
+Para configurar a execução do Automated ML, precisamos de especificar o tipo de tarefa com que estamos a lidar, a métrica primária, os conjuntos de dados de treino e validação (que estão na forma TabularDataset) e o nome da coluna de destino. A caraterização é definida como "auto", o que significa que a etapa de caraterização deve ser feita automaticamente. 
 
 ### Results
-The best model overall was the `VotingEnsemble` model, with an R2 Score of 0.99787. The remainder of the models were between about 0.75571 and 0.99786, except VotingEnsemble.
+O melhor modelo geral foi o modelo `VotingEnsemble`, com um R2 Score de 0,99787. Os demais modelos ficaram entre 0,75571 e 0,99786, exceto o VotingEnsemble.
 
+A execução do AutoML tem os seguintes parâmetros:
 
-The AutoML run has the following parameters:
+* *task*: Para ajudar a gerenciar as execuções secundárias e quando elas podem ser executadas, recomendamos que você crie um cluster dedicado por experimento. Neste projeto, `4` foi o número de execuções/iterações secundárias simultâneas. 
+ 
+* *max_concurrent_iterations*: Esta é a métrica que é optimizada durante a formação do algoritmo do modelo. Por exemplo, a exatidão, a área sob a curva (AUC), a pontuação R2, etc. Neste projeto, o `R2 Score` foi utilizado como uma métrica de sucesso.
+* *primary_metric*: Esta é a métrica que é optimizada durante o treino do algoritmo do modelo. Por exemplo, a exatidão, a área sob a curva (AUC), a pontuação R2, etc. Neste projeto, o `R2 Score` foi utilizado como uma métrica de sucesso.
 
-* *task*: To help manage child runs and when they can be performed, we recommend you create a dedicated cluster per experiment. In this project, `4` was the number of concurrent child runs/iterations. 
+* *experiment_timeout_minutes*: Este é o tempo máximo durante o qual o AutoML pode utilizar diferentes modelos para treinar no conjunto de dados. Neste projeto, o tempo máximo de espera em horas foi `0.5`.
 
-* *max_concurrent_iterations*: This is the metrics which is optimised during the training of the model algorithm. For example, Accuracy, Area Under Curve(AUC), R2 Score, etc. In this project, `R2 Score` was used as an success metrics.
-* *primary_metric*: This is the metrics which is optimised during the training of the model algorithm. For example, Accuracy, Area Under Curve(AUC), R2 Score, etc. In this project, `R2 Score` was used as an success metrics.
+* *training_data*: Estes são os dados de treinamento sobre os quais todos os diferentes modelos são treinados. Neste projeto, foi o `ideb_dataset`.
 
-* *experiment_timeout_minutes*: This is the max time for which the AutoML can use different models to train on the dataset. In this project, the max timeout in hours was `0.5`.
+* *label_column_name*: Esta é a variável que é prevista pelo modelo. Neste projeto, foi o `IDEB_2019`.
 
-* *training_data*: This is the training data on which all the different models are trained on. In this project, it was `ideb_dataset`.
+* *n_cross_validations*: Este é o n do processo de validação cruzada. A validação cruzada é o processo em que diferentes pontos de dados são colocados no conjunto de dados de treino e de teste (resampling) para garantir que o modelo não se ajusta demasiado a determinados valores. Neste projeto, o n era `3`.
 
-* *label_column_name*: This is the variable which is predicted by the model. In this project, it was the `IDEB_2019`.
+* *featurization*: Isto ajuda certos algoritmos que são sensíveis a características em diferentes escalas. Por exemplo, pode ativar mais caraterização, como imputação de valores em falta, codificação e transformações. Neste projeto, a caraterização foi `auto` (especifica que, como parte do pré-processamento, os guardrails de dados e os passos de caraterização devem ser feitos automaticamente). 
 
-* *n_cross_validations*: This is the n in cross validation process. Cross validation is the process where different data points are put into training and testing dataset (resampling) to ensure that the model does not overfit over certain values. In this project, the n was `3`.
-
-* *featurization*: This help certain algorithms that are sensitive to features on different scales. For example, you can enable more featurization, such as missing-values imputation, encoding, and transforms. In this project, the featurization was `auto` (specifies that, as part of preprocessing, data guardrails and featurization steps are to be done automatically). 
-
-This contains the `RunDetails` widget from the Jupyter notebook implementation in the case of AutoML run:
+Contém o widget `RunDetails` da implementação do bloco de notas Jupyter no caso da execução do AutoML:
 
 ![automl_rundetails](./Images/automl_rundetails.png)
 
-The following screenshots shows the iteration
+As seguintes capturas de ecrã mostram a iteração
 
 ![automl_iteration](./Images/automl_iteration.png)
 
-The following screenshots shows the best run ID:
+Os seguintes screenshots mostram o melhor ID de execução:
 
 ![automl_bestmodel](./Images/automl_bestmodel.png)
 
-For a complete code overview, I refer to the jypter notebook automl.ipynb.
-We can perhaps improve the mean absolute error score by:
-- Enable logging in the deployed web app
-- Convert the model to ONNX format
-- Increasing the number of iterations
-- Evaluate other regression models.
+Para uma visão geral completa do código, remeto para o notebook jypter automl.ipynb.
+Talvez possamos melhorar a pontuação do erro absoluto médio ao:
+- Ativar o registo na aplicação Web implementada
+- Converter o modelo para o formato ONNX
+- Aumentar o número de iterações
+- Avaliar outros modelos de regressão.
 
 ## Hyperparameter Tuning
-The objective of this project is to predict the Ideb per school at the Brazilian middle level. According to the data, the target variable "IDEB_2019" is a floating variable, which is a continuous variable ranging from 1.0, 1.6, 2.5, 3.5, 7.5 etc., therefore, it deals with yourself from a regression problem. In this case, then use regression models such as linear regression, random forest regression or any other regression model. Considering that in the classification model, I need to convert the target resource - "IDEB_2019" into a categorical resource with 1 or 0, not being suitable for the purpose of this project, it is evident that this is a `regression problem`.
+O objetivo deste projeto é prever o Ideb por escola no nível médio brasileiro. De acordo com os dados, a variável alvo "IDEB_2019" é uma variável flutuante, ou seja, uma variável contínua que varia entre 1,0, 1,6, 2,5, 3,5, 7,5 etc., portanto, trata-se de um problema de regressão. Nesse caso, então, utiliza-se modelos de regressão como a regressão linear, a regressão de floresta aleatória ou qualquer outro modelo de regressão. Considerando que no modelo de classificação, eu preciso converter o recurso alvo - "IDEB_2019" em um recurso categórico com 1 ou 0, não sendo adequado para o propósito deste projeto, é evidente que este é um `problema de regressão`.
 
-Since the task was a regression problem, the model used the `Random Forest Regressor`, since: (i) It is one of the most accurate learning algorithms available. For many data sets, it produces a highly accurate classifier; (ii) It runs efficiently on large databases; (iii) It can handle thousands of input variables without variable deletion; (iv) It generates an internal unbiased estimate of the generalization error as the forest building progresses; (v) It has an effective method for estimating missing data and maintains accuracy when a large proportion of the data are missing.
+Uma vez que a tarefa era um problema de regressão, o modelo utilizou o `Random Forest Regressor`, uma vez que: (i) É um dos algoritmos de aprendizagem mais precisos disponíveis. Para muitos conjuntos de dados, produz um classificador altamente preciso; (ii) funciona eficientemente em grandes bases de dados; (iii) pode lidar com milhares de variáveis de entrada sem eliminação de variáveis; (iv) gera uma estimativa interna não enviesada do erro de generalização à medida que a construção da floresta progride; (v) tem um método eficaz para estimar dados em falta e mantém a precisão quando uma grande proporção dos dados está em falta.
 
-For the hyperparameter adjustment experiment, done via HyperDrive, the types of parameters and their ranges group the following parameters:
+Para a experiência de ajuste dos hiperparâmetros, efectuada através do HyperDrive, os tipos de parâmetros e os seus intervalos agrupam os seguintes parâmetros:
 
-* *primary_metric_name*: This is the metrics which is optimised during the training of the model algorithm. For example, Accuracy, Area Under Curve(AUC) etc. In this project, `R2 Score` is used as an success metrics.
+* *primary_metric_name*:  Esta é a métrica que é optimizada durante a formação do algoritmo do modelo. Por exemplo, a exatidão, a área sob a curva (AUC), etc. Neste projeto, a `R2 Score` é utilizada como uma métrica de sucesso.
 
-* *primary_metric_goal*: This is the parameter which tells Hyperdrive how to optimise the algorithm using the primary_metric_name given. The goal can be anything from Maximize to Minimise the primary_metric_name. In this project, it is `PrimaryMetricGoal.MAXIMIZE`.
+* *primary_metric_goal*: Este é o parâmetro que diz ao Hyperdrive como otimizar o algoritmo utilizando o nome_primário_métrico fornecido. O objetivo pode ser qualquer coisa desde Maximizar até Minimizar o nome_da_métrica_primária. Neste projeto, é `PrimaryMetricGoal.MAXIMIZE`.
 
-* *max_total_runs*: This is the maximum number of runs which Hyperdrive will run using different hyperparameters. In this project, the max_total_runs is `40`.
+* *max_total_runs*: Este é o número máximo de execuções que o Hyperdrive executará usando diferentes hiperparâmetros. Neste projeto, o max_total_runs é `40`.
 
-* *max_concurrent_runs*: This is the maximum number of run which run concurrently over different threads. In this project, the max_concurrent_runs is `8`.
+* *max_concurrent_runs*: Este é o número máximo de execuções que são executadas simultaneamente em diferentes threads. Neste projeto, o max_concurrent_runs é `8`.
 
-* *hyperparameter_sampling*: This is the Parameter Sampler which specfies the techniques in which the hyperparameters are tuned. In this project, RandomParameterSampling was used to tune the hyperparameter '--max_depth' with `choice(range(1, 20)`, '--min_samples_split' with `choice(2, 5, 10, 15, 100)` and '--min_samples_leaf' with `choice(range(1, 10)`.
+* *hyperparameter_sampling*: ste é o Parameter Sampler que especifica as técnicas nas quais os hiperparâmetros são ajustados. Neste projeto, o RandomParameterSampling foi utilizado para afinar os hiperparâmetros '--max_depth' com `choice(range(1, 20)`, '--min_samples_split' com `choice(2, 5, 10, 15, 100)` e '--min_samples_leaf' com `choice(range(1, 10)`.
 
-* *policy*: This is the early stopping policy used by Hyperdrive which is used to provide guidance as to how many iterations can be run before the model begins to overfit. In this project, BanditPolicy was used with argument evaluation_interval of `2` and slack_factor of `0.1`. BanditPolciy terminates any run whos primary metrics is less than the slack factor of best run.
+* *policy*: Esta é a política de parada antecipada usada pelo Hyperdrive, que é usada para fornecer orientação sobre quantas iterações podem ser executadas antes que o modelo comece a se sobreajustar. Neste projeto, BanditPolicy foi utilizada com o argumento evaluation_interval de `2` e slack_factor de `0.1`. BanditPolciy termina qualquer execução cuja métrica primária seja menor que o fator de folga da melhor execução.
 
-* *RunConfig*: There are several methods for setting up a training job in Azure Machine Learning through the SDK. This is the training script that will be run with the sample hyperparameters. For exemple, Estimators, ScriptRunConfig, and the lower-level RunConfiguration. In this project `ScriptRunConfig` (It defines the resources per job (single or multi-node), and the compute target to use).
+* *RunConfig*: Existem vários métodos para configurar um trabalho de treino no Azure Machine Learning através do SDK. Este é o script de treino que será executado com os hiperparâmetros de amostra. Por exemplo, Estimators, ScriptRunConfig e o RunConfiguration de nível inferior. Neste projeto, o `ScriptRunConfig` (define os recursos por trabalho (um ou vários nós) e o destino de computação a ser usado).
 
-This contains the RunDetails implementation in the case of Hyperdrive run.
+Contém a implementação RunDetails no caso da execução Hyperdrive.
 
 ### Results
 
-The best model of HyperDrive run was VotingEnsemble with `0.99787 R2 Score`. This contains the `RunDetails` implementation of the the best model trained with it's parameters:
+O melhor modelo da execução do HyperDrive foi o VotingEnsemble com `0.99787 R2 Score`. Este contém a implementação `RunDetails` do melhor modelo treinado com seus parâmetros:
 ![hyperdrive_rundetails](./Images/hyperdrive_rundetails.png)
 
-This shows that the best model generated by Hyperdrive with its run id:
+Isto mostra que o melhor modelo gerado pelo Hyperdrive com o seu ID de execução:
 ![hyperdrive_bestrun](./Images/hyperdrive_bestrun.png)
 
-Some ideas on how to perhaps improve the The best model of HyperDrive:
-- Test different sampling methods
-- Specify different types of hyperparameter distributions
-- Exploring another range of values defined for each hyperparameter
-- Exploring another early termination policy
-- Increasing the number of iterations
+Algumas ideias sobre como talvez melhorar o melhor modelo de HyperDrive:
+- Testar diferentes métodos de amostragem
+- Especificar diferentes tipos de distribuições de hiperparâmetros
+- Explorar outra gama de valores definidos para cada hiperparâmetro
+- Explorar outra política de terminação antecipada
+- Aumentar o número de iterações
 
-For a complete code overview, I refer to the jypter notebook automl.ipynb.
+Para uma visão geral completa do código, consulte o notebook jypter automl.ipynb.
 
 ## Model Deployment
-Summarizing the results, the best model generated by AutoML 38 models among with the `VotingEnsemblehad` performed the best with 0.99787 R2 Score. On the other hand, The Hyperdrive generated 40 models and the best model when running HyperDrive was with 0.9978595055572106 R2 Score. So, I implemented the best model - which happened to be the VotingEnsemble model for executing AutoML, as an endpoint.
+Resumindo os resultados, o melhor modelo gerado pelo AutoML foi 38 modelos dentre os quais o `VotingEnsemblehad` teve o melhor desempenho com 0.99787 R2 Score. Por outro lado, o Hyperdrive gerou 40 modelos e o melhor modelo ao executar o HyperDrive foi com 0.9978595055572106 R2 Score. Então, eu implementei o melhor modelo - que por acaso era o modelo VotingEnsemble para executar o AutoML, como um endpoint.
 
-The AutoML generated `103` models among with the `VotingEnsemble` performed the best with 0.99787 R2 Score. On the other hand, The Hyperdrive generated 48 iterations with the Logistic Regression Model with different hyperparameter tuning of min_samples_leaf, min_samples_split and max_depth parameters and achieved an R2 Score of 0.9978595055572106 with min_samples_leaf as 3, min_samples_split as 5 and max_depth as 15. Therefore the Hyperdrive Model has been deployed.
+Os modelos `103` gerados pelo AutoML, dentre os quais o `VotingEnsemble` teve o melhor desempenho com 0.99787 R2 Score. Por outro lado, o Hyperdrive gerou 48 iterações com o Modelo de Regressão Logística com diferentes ajustes dos hiperparâmetros min_samples_leaf, min_samples_split e max_depth e obteve um R2 Score de 0,9978595055572106 com min_samples_leaf como 3, min_samples_split como 5 e max_depth como 15. Portanto, o modelo Hyperdrive foi implantado.
 
-This contains the `Endpont` active:
+Este contém o `Endpont` ativo:
 
 ![endpoint](./Images/endpoint.png)
 
-The best model is deployed following this steps:
+O melhor modelo é implementado seguindo estes passos:
 
-* *Register the model*: In addition to the content of the model file itself, your registered model will also store model metadata -- model description, tags, and framework information -- that will be useful when managing and deploying models in your workspace;
-* *Prepare an inference configuration*: An inference configuration describes how to set up the web-service containing your model. It's used later, when you deploy the model;
-* *Prepare an entry script (used score.py)*: The entry script receives data submitted to a deployed web service and passes it to the model. It then takes the response returned by the model and returns that to the client. The entry_script used as an input to InferenceConfig was "score.py", which is the best working model generated from Hyperdrive;
-* *Choose a compute target*: The compute target you use to host your model will affect the cost and availability of your deployed endpoint. The compute target choose was an Azure Container Instance which included the scoring script;
-* *Deploy the model to the compute target*: Web services take one or more models, load them in an environment, and run them on one of several supported deployment targets. ; 
-* *Test the resulting web service*: After successful deployment, a REST endpoing with a scoring url was generated to be used for predictions as shown below:
-![REST_endpoint](./Images/REST_endpoint.png)
+* *Register the model*: Para além do conteúdo do próprio ficheiro de modelo, o seu modelo registado também armazena metadados do modelo - descrição do modelo, etiquetas e informações da estrutura - que serão úteis ao gerir e implementar modelos no seu espaço de trabalho;
+* *Prepare an inference configuration*: Uma configuração de inferência descreve como configurar o serviço Web que contém o seu modelo. É utilizada mais tarde, quando o modelo é implementado;
+* *Prepare an entry script (used score.py)*: O script de entrada recebe os dados submetidos a um serviço Web implementado e passa-os para o modelo. Em seguida, pega na resposta devolvida pelo modelo e devolve-a ao cliente. O entry_script utilizado como entrada para InferenceConfig foi "score.py", que é o melhor modelo de trabalho gerado a partir do Hyperdrive;
+* *Choose a compute target*: The compute target que utilizar para alojar o seu modelo afectará o custo e a disponibilidade do seu ponto final implementado. O destino de computação escolhido foi uma Instância de Contêiner do Azure que incluía o script de pontuação;
+* *Deploy the model to the compute target*: Os serviços Web pegam num ou mais modelos, carregam-nos num ambiente e executam-nos num dos vários alvos de implementação suportados; 
+* *Test the resulting web service*: Após a implantação bem-sucedida, foi gerado um endpoing REST com um url de pontuação para ser usado para previsões, conforme mostrado abaixo: ![REST_endpoint](./Images/REST_endpoint.png).
 
-After deploying the model as a web service, a REST API endpoint was created. You can send data to this endpoint and receive the forecast returned by the model. This example demonstrates how I used Python to call the created web service:
+Depois de implementar o modelo como um serviço Web, foi criado um ponto de extremidade da API REST. Pode enviar dados para este ponto final e receber a previsão devolvida pelo modelo. Este exemplo demonstra como utilizei o Python para chamar o serviço Web criado:
+
 
 ```
 import requests
@@ -221,32 +221,32 @@ headers = {'Content-Type': 'application/json'}
 resp = requests.post(scoring_uri, input_data, headers=headers)
 print(resp.text)
 ```
-The result returned is similar to the following:
+O resultado obtido é semelhante ao seguinte:
 
 ```
 "{\"result\": [6.903481911249511]}"
 ```
-That is, a high school with the features described in `data {}` has the result of Ideb 6.903481911249511.
+Ou seja, uma escola de ensino médio com as características descritas em `data {}` tem o resultado do Ideb 6.903481911249511.
 
-At the end, I delete the ACI deployment as well as the compute cluster.
+No final, eu excluo a implantação da ACI, bem como o cluster de computação.
 
 ## Suggestions to Improve
-Some areas of improvement for future experiments are:
+Algumas áreas de melhoria para experiências futuras são
 
-- Test different sampling methods
-- Specify different types of hyperparameter distributions
-- Enable logging in the deployed web app
-- Change the search space
-- Deploy the model to the Edge using Azure IoT Edge
-- Exploring another range of values defined for each hyperparameter
-- Exploring another early termination policy
-- Using more data is the simplest and best possible way to prevent over-fitting
-- Convert the model to ONNX format
-- Increasing the number of iterations
-- Setting the featurization to be auto
-- Using neural network based regression
+- Testar diferentes métodos de amostragem
+- Especificar diferentes tipos de distribuições de hiperparâmetros
+- Ativar o registo na aplicação Web implementada
+- Alterar o espaço de pesquisa
+- Implantar o modelo no Edge usando o Azure IoT Edge
+- Explorar outro intervalo de valores definidos para cada hiperparâmetro
+- Explorar outra política de encerramento antecipado
+- Usar mais dados é a maneira mais simples e melhor possível de evitar o ajuste excessivo
+- Converter o modelo para o formato ONNX
+- Aumentar o número de iterações
+- Definir a caraterização como automática
+- Utilizar a regressão baseada em redes neuronais
 
-The implementation of these improvements in future work to improve the accuracy of the model and obtain new insights for the business. In addition, it is possible to develop pipelines that make it possible to reuse this model and continuous improvements.
+A implementação destas melhorias em trabalhos futuros permitirá melhorar a precisão do modelo e obter novos conhecimentos para a empresa. Além disso, é possível desenvolver pipelines que possibilitem a reutilização deste modelo e melhorias contínuas.
 
 ## Reference
 <ol>
