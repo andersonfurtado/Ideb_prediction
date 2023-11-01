@@ -165,7 +165,7 @@ Para uma visão geral completa do código, consulte o notebook jupyter automl.ip
 ## Implementação do modelo
 Resumindo os resultados, o melhor modelo gerado pelo AutoML foi 38 modelos dentre os quais o `VotingEnsemblehad` teve o melhor desempenho com 0.99787 R2 Score. Por outro lado, o Hyperdrive gerou 40 modelos e o melhor modelo ao executar o HyperDrive foi com 0.9978595055572106 R2 Score. Então, eu implementei o melhor modelo - que por acaso era o modelo VotingEnsemble para executar o AutoML, como um endpoint.
 
-Os modelos `103` gerados pelo AutoML, dentre os quais o `VotingEnsemble` teve o melhor desempenho com 0.99787 R2 Score. Por outro lado, o Hyperdrive gerou 48 iterações com o Modelo de Regressão Logística com diferentes ajustes dos hiperparâmetros min_samples_leaf, min_samples_split e max_depth e obteve um R2 Score de 0,9978595055572106 com min_samples_leaf como 3, min_samples_split como 5 e max_depth como 15. Portanto, o modelo Hyperdrive foi implantado.
+Os modelos `103` gerados pelo AutoML, dentre os quais o `VotingEnsemble` teve o melhor desempenho com 0.99787 R2 Score. Por outro lado, o Hyperdrive gerou 48 iterações com o Modelo de Regressão Logística com diferentes ajustes dos hiperparâmetros min_samples_leaf, min_samples_split e max_depth e obteve um R2 Score de 0,9978595055572106 com min_samples_leaf como 3, min_samples_split como 5 e max_depth como 15. Portanto, o modelo AutoML foi implantado.
 
 Ele contém o `Endpont` ativo:
 
